@@ -2,9 +2,9 @@
 {
     public class Team
     {
-        public required int Id { get; set; }
+        public int Id { get; set; }
 
-        public string? TeamName { get; set; }
+        public string TeamName { get; set; }
 
         public List<Player> Players { get; set; } = new();
 

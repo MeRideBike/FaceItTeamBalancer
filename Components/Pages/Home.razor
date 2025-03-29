@@ -1,80 +1,130 @@
 ﻿@page "/"
+@using FaceItTeamBalancer.Components.Models
 @inject HttpClient Http
-@using FaceItTeamBalancer.Components.Models;
 
-<h3>FACEIT Team Builder</h3>
+<div class="container mt-4">
 
-<div>
-    <h4>Add Player</h4>
-    <input placeholder="Name" @bind="newPlayer.Name" />
-    <input type="number" placeholder="Rank (1-10)" @bind="newPlayer.FaceitRank" />
-    <input placeholder="Role (optional)" @bind="newPlayer.Role" />
-    <button @onclick="AddPlayer">Add</button>
+    <p>@($"Debug: Players count = {players.Count}")</p>
+
+    <h3>FACEIT Team Builder</h3>
+
+    <div>
+        <h4>Add Player</h4>
+        <input placeholder="Name" @bind="newPlayer.Name" />
+        <input type="number" placeholder="Rank (1-10)" @bind="newPlayer.FaceitRank" />
+        @* <input placeholder="Role (optional)" @bind="newPlayer.Role" /> *@
+        <button @onclick="AddPlayer">Add</button>
+    </div>
+
+    <br />
+
+    @if (players.Any())
+    {
+        <h4>Players:</h4>
+        <ul>
+            @foreach (var p in players)
+            {
+                <li>@p.Name (Rank @p.FaceitRank)</li>
+            }
+        </ul>
+
+        <button @onclick="GenerateTeams">Generate Balanced Teams</button>
+    }
+    @if (teamA.Players.Any())
+    {
+        <h4>Generated Teams</h4>
+        <div class="row">
+            <div class="col">
+                <h5>Team A (Total Rank: @teamA.TotalRank)</h5>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Rank</th>
+                            @* <th>Role</th> *@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in teamA.Players)
+                        {
+                            <tr>
+                                <td>@p.Name</td>
+                                <td>@p.FaceitRank</td>
+                                @* <td>@p.Role</td> *@
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="col">
+                <h5>Team B (Total Rank: @teamB.TotalRank)</h5>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Rank</th>
+                            @* <th>Role</th> *@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in teamB.Players)
+                        {
+                            <tr>
+                                <td>@p.Name</td>
+                                <td>@p.FaceitRank</td>
+                                @* <td>@p.Role</td> *@
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
 </div>
 
-<br />
-
-@if (players.Any())
-{
-    <h4>Players:</h4>
-    <ul>
-        @foreach (var p in players)
-        {
-            <li>@p.Name (Rank @p.FaceitRank, @p.Role)</li>
-        }
-    </ul>
-
-    <button @onclick="GenerateTeams">Generate Balanced Teams</button>
-}
-
-@if (teamA.Players.Any())
-{
-    <h4>Team A (Total Rank: @teamA.TotalRank)</h4>
-    <ul>
-        @foreach (var p in teamA.Players)
-        {
-            <li>@p.Name (Rank @p.FaceitRank)</li>
-        }
-    </ul>
-
-    <h4>Team B (Total Rank: @teamB.TotalRank)</h4>
-    <ul>
-        @foreach (var p in teamB.Players)
-        {
-            <li>@p.Name (Rank @p.FaceitRank)</li>
-        }
-    </ul>
-}
-
 @code {
-    List<Player> players = new();
-    Player newPlayer = new() {Name = ""};
+        List<Player> players = new();
 
-    Team teamA = new() { Id = 1};
-    Team teamB = new() { Id = 2};
+        Player newPlayer = new Player
+        {
+            //Name = string.Empty,
+            //Role = string.Empty,
+            //FaceitRank = 1 // Provide a sane default
+        };
 
-    async Task AddPlayer()
-    {
-        players.Add(new Player
-            {
-                Name = newPlayer.Name,
-                FaceitRank = newPlayer.FaceitRank,
-                Role = newPlayer.Role
-            });
+        Team teamA = new();
+        Team teamB = new();
 
-        newPlayer = new() { Name = ""}; // Reset input
+    async Task AddPlayer(){
+
+        if (newPlayer.Name != null && newPlayer.FaceitRank > 0 && newPlayer.FaceitRank < 11)
+        {
+            players.Add(new Player
+                {
+                    Name = newPlayer.Name,
+                    FaceitRank = newPlayer.FaceitRank,
+                    // Role = newPlayer.Role
+                });
+
+            newPlayer = new Player
+                {
+                    Name = string.Empty,
+                    //Role = string.Empty,
+                    FaceitRank = 1
+                };
+
+            StateHasChanged(); // Force re-render
+        }
     }
 
     async Task GenerateTeams()
     {
         var response = await Http.PostAsJsonAsync("api/teams/generate", players);
-
         if (response.IsSuccessStatusCode)
         {
             var result = await response.Content.ReadFromJsonAsync<BalanceResult>();
-
-                teamA = result.TeamA;
-                teamB = result.TeamB;
+            teamA = result.TeamA;
+            teamB = result.TeamB;
         }
     }
 
