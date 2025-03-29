@@ -1,4 +1,4 @@
-﻿namespace FaceItTeamBalancer.Models
+﻿namespace FaceItTeamBalancer.Components.Models
 {
     public class Team
     {

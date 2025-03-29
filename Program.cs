@@ -13,10 +13,11 @@ builder.Services.AddCors(options =>
 
 
 
-
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

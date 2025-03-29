@@ -1,8 +1,8 @@
-﻿namespace FaceItTeamBalancer.Models
+﻿namespace FaceItTeamBalancer.Components.Models
 {
     public class Player
     {
-        public int Id { get; set; }
+        //public int Id { get; set; }
 
         public required string Name { get; set; }
 

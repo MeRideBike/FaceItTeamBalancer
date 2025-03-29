@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using FaceItTeamBalancer.Models;
-using FaceItTeamBalancer.Helpers;
+using FaceItTeamBalancer.Components.Models;
+using FaceItTeamBalancer.Components.Helpers;
 
-namespace FaceItTeamBalancer.Controllers
+namespace FaceItTeamBalancer.Components.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -29,15 +29,15 @@ namespace FaceItTeamBalancer.Controllers
             {
                 teamA = new
                 {
-                    Name = request.TeamA.Name,
-                    Players = request.TeamA.Players,
-                    TotalRank = request.TeamA.TotalRank
+                    request.TeamA.TeamName,
+                    request.TeamA.Players,
+                    request.TeamA.TotalRank
                 },
                 teamB = new
                 {
-                    Name = request.TeamB.Name,
-                    Players = request.TeamB.Players,
-                    TotalRank = request.TeamB.TotalRank
+                    request.TeamB.TeamName,
+                    request.TeamB.Players,
+                    request.TeamB.TotalRank
                 }
             });
         }

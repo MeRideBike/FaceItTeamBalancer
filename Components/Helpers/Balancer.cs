@@ -1,6 +1,6 @@
-﻿namespace FaceItTeamBalancer.Helpers
+﻿namespace FaceItTeamBalancer.Components.Helpers
 {
-    using FaceItTeamBalancer.Models;
+    using FaceItTeamBalancer.Components.Models;
     using System.Linq;
 
     public static class Balancer
@@ -11,8 +11,8 @@
             var random = new Random();
             players = players.OrderBy(x => random.Next()).ToList();
 
-            Team teamA = new() { Id = 1};
-            Team teamB = new() { Id = 2};
+            Team teamA = new() { Id = 1 };
+            Team teamB = new() { Id = 2 };
 
             foreach (var player in players)
             {
