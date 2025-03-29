@@ -24,6 +24,15 @@
 
             return (teamA, teamB);
         }
-    }
 
+        public static class TeamValidator
+        {
+            public static bool HasDuplicatePlayers(Team teamA, Team teamB)
+            {
+                var names = teamA.Players.Select(p => p.Name)
+                             .Concat(teamB.Players.Select(p => p.Name));
+                return names.GroupBy(n => n).Any(g => g.Count() > 1);
+            }
+        }
+    }
 }
